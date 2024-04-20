@@ -92,6 +92,10 @@
                 cell.textContent = '';
             }else{
                 cell.textContent = map[i][j];
+                if(map[i][j] === '·'){
+                    cell.style.color = 'white';
+                }
+
             }
             gridContainer.appendChild(cell);
         }
@@ -126,6 +130,9 @@
         const newPacman = document.querySelector(`.grid-container div:nth-child(${pacmanY*20+pacmanX+1})`);
         newPacman.classList.add('pacman');
 
+        //remove the dot if the pacman is on it
+        ifDotRemove(pacmanX, pacmanY);
+        
         //rotate the pacman according to the direction
         if(key === 'ArrowRight'){
             rotatePacman('right');
@@ -137,6 +144,15 @@
             rotatePacman('down');
         }
     });
+
+    //given two coordinates x and y, remove the '·' from the map if the dot is contained in that cell
+    function ifDotRemove(x, y){
+        const cell = document.querySelector(`.grid-container div:nth-child(${y*20+x+1})`);
+        if(cell.textContent === '·'){
+            cell.textContent = '';
+        }
+    }
+   
 
 
     //method that rotate the pacman according to the direction
