@@ -124,6 +124,20 @@
             pacmanY++;
         }
 
+        //check if the pacman is on a wall
+        if(isWall(pacmanX, pacmanY)){
+            if(key === 'ArrowRight'){
+                pacmanX--;
+            }else if(key === 'ArrowLeft'){
+                pacmanX++;
+            }else if(key === 'ArrowUp'){
+                pacmanY++;
+            }else if(key === 'ArrowDown'){
+                pacmanY--;
+            }
+            return;
+        }
+
         //update the pacman position
         const pacman = document.querySelector('.pacman');
         pacman.classList.remove('pacman');
@@ -151,6 +165,11 @@
         if(cell.textContent === '·'){
             cell.textContent = '';
         }
+    }
+
+    //boolean function that return true if the cell is a wall given a x,y coordinate
+    function isWall(y,x){
+        return map[x][y] === '═' || map[x][y] === '║' || map[x][y] === '╔' || map[x][y] === '╗' || map[x][y] === '╝' || map[x][y] === '╚' || map[x][y] === '╦' || map[x][y] === '╩'|| map[x][y] === '══';
     }
    
 
