@@ -105,7 +105,27 @@
         }else{
             pacman.style.backgroundImage = 'url("./pac-aperto.png")';
         }
-    }, 500);
+    }, 400);
+
+    //now if the user press the arrow key the pacman should move
+    document.addEventListener('keydown', (event) => {
+        const key = event.key;
+        if(key === 'ArrowRight'){
+            pacmanX++;
+        }else if(key === 'ArrowLeft'){
+            pacmanX--;
+        }else if(key === 'ArrowUp'){
+            pacmanY--;
+        }else if(key === 'ArrowDown'){
+            pacmanY++;
+        }
+
+        //update the pacman position
+        const pacman = document.querySelector('.pacman');
+        pacman.classList.remove('pacman');
+        const newPacman = document.querySelector(`.grid-container div:nth-child(${pacmanY*20+pacmanX+1})`);
+        newPacman.classList.add('pacman');
+    });
 
     
     
