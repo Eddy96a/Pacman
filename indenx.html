@@ -125,8 +125,35 @@
         pacman.classList.remove('pacman');
         const newPacman = document.querySelector(`.grid-container div:nth-child(${pacmanY*20+pacmanX+1})`);
         newPacman.classList.add('pacman');
+
+        //rotate the pacman according to the direction
+        if(key === 'ArrowRight'){
+            rotatePacman('right');
+        }else if(key === 'ArrowLeft'){
+            rotatePacman('left');
+        }else if(key === 'ArrowUp'){
+            rotatePacman('up');
+        }else if(key === 'ArrowDown'){
+            rotatePacman('down');
+        }
     });
 
+
+    //method that rotate the pacman according to the direction
+    function rotatePacman(direction){
+        const pacman = document.querySelector('.pacman');
+        if(direction === 'right'){
+            pacman.style.transform = 'rotate(0deg)';
+        }else if(direction === 'left'){
+            pacman.style.transform = 'rotate(180deg)';
+            //reflect the image on vertical axis
+            pacman.style.transform = 'scaleX(-1)';
+        }else if(direction === 'up'){
+            pacman.style.transform = 'rotate(270deg)';
+        }else if(direction === 'down'){
+            pacman.style.transform = 'rotate(90deg)';
+        }
+    }
     
     
 
