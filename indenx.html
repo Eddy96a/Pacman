@@ -15,6 +15,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         height: 100vh;
         background-color: rgb(28, 28, 30);
     }
@@ -33,6 +34,14 @@
         border: 1px solid black;
         width: fit-content;
         border-collapse: collapse;
+    }
+
+    .contatore{
+        color: white;
+        width: 320px;
+        font-size: 14px;
+        margin-bottom: 10px;
+        text-align: right;
     }
 
     .pacman{
@@ -55,8 +64,9 @@
         font-size: 22px;
     }
 </style>
-<body>
+<body>    
     <div class="container">
+        <div id="pallini" class="contatore">Pallini: 200</div>
         <div class="centrato grid-container" id="gridContainer">
 
         </div>
@@ -79,9 +89,11 @@
 
     var pacmanX = 1;
     var pacmanY = 1;
-
     const N = 10; //righe
     const M = 20  //colonne
+
+    var dots = countDots();
+
     const gridContainer = document.getElementById("gridContainer");
     for (let i = 0; i < N; i++) {
         for (let j = 0; j < M; j++) {
@@ -164,6 +176,8 @@
         const cell = document.querySelector(`.grid-container div:nth-child(${y*20+x+1})`);
         if(cell.textContent === '·'){
             cell.textContent = '';
+            dots--;
+            document.getElementById('pallini').textContent = `Pallini: ${dots}`;
         }
     }
 
@@ -188,6 +202,24 @@
         }else if(direction === 'down'){
             pacman.style.transform = 'rotate(90deg)';
         }
+    }
+
+    //return the number of dots in the map
+    function countDots(){
+        let count = 0;
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < M; j++) {
+                if(map[i][j] === '·'){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    //on load print the number of dots in div with id 'pallini'
+    window.onload = function(){
+        document.getElementById('pallini').textContent = `Pallini: ${dots}`;
     }
     
     
