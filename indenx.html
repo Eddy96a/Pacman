@@ -35,13 +35,23 @@
         border-collapse: collapse;
     }
 
+    .pacman{
+        width: 16px;
+        height: 20px;
+        color: rgb(19, 29, 228);
+        text-align: center;
+        background-image: url('./pac-aperto.png');
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
     .cell {
         width: 16px;
         height: 20px;
         color: rgb(19, 29, 228);
         text-align: center;
         background-color: black;
-        
         font-size: 22px;
     }
 </style>
@@ -66,6 +76,10 @@
     ['║', ' ', ' ', ' ', ' ', ' ', ' ', '║', ' ', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
     ['╚', '══', '══', '══', '══', '══', '══', '══','══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══','╝']
 ];
+
+    var pacmanX = 1;
+    var pacmanY = 1;
+
     const N = 10; //righe
     const M = 20  //colonne
     const gridContainer = document.getElementById("gridContainer");
@@ -73,10 +87,28 @@
         for (let j = 0; j < M; j++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
-            cell.textContent = map[i][j];
+            if(i==1 && j==1){
+                cell.classList.add('pacman');
+                cell.textContent = '';
+            }else{
+                cell.textContent = map[i][j];
+            }
             gridContainer.appendChild(cell);
         }
     }
+
+    //create a thread that switch the image of pacman every 500ms
+    setInterval(() => {
+        const pacman = document.querySelector('.pacman');
+        if(pacman.style.backgroundImage === 'url("./pac-aperto.png")'){
+            pacman.style.backgroundImage = 'url("./pac-chiuso.png")';
+        }else{
+            pacman.style.backgroundImage = 'url("./pac-aperto.png")';
+        }
+    }, 500);
+
+    
+    
 
 
 </script>
