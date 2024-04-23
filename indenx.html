@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/8b83982672.js" crossorigin="anonymous"></script>
     <title>Pacman</title>
 </head>
 <style>
@@ -36,7 +38,7 @@
         border-collapse: collapse;
     }
 
-    .contatore{
+    .contatore {
         color: white;
         width: 320px;
         font-size: 14px;
@@ -44,7 +46,7 @@
         text-align: right;
     }
 
-    .pacman{
+    .pacman {
         width: 16px;
         height: 20px;
         color: rgb(19, 29, 228);
@@ -63,8 +65,29 @@
         background-color: black;
         font-size: 22px;
     }
+
+    .fantasmino {
+        width: 12px;
+        height: 16px;
+        background-image: url('./ghost-solid.svg');
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+
+    }
+
+    .rip {
+        width: 12px;
+        height: 16px;
+        background-image: url('./grave.png');
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+
+    }
 </style>
-<body>    
+
+<body>
     <div class="container">
         <div id="pallini" class="contatore">Pallini: 200</div>
         <div class="centrato grid-container" id="gridContainer">
@@ -75,17 +98,27 @@
 
 <script>
     const map = [
-    ['╔', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '╗'],
-    ['║', '', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
-    ['║', '╔', '══', '╦', '═', '╗', '·', '╔','══','══','══','╗', '·', '·', '·', '·', '·', '·', '·', '║'],
-    ['║', '║', '·','║', '·', '║', '·', '║', ' ', ' ', ' ', '║', '·', '·', '·', '·', '·', '·', '·', '║'],
-    ['║', ' ', '·', '║', '·', '║', '·', '╚', '══', '══', '══', '╝', '·', '·', '·', '·', '·', '·', '·', '║'],
-    ['║', ' ', '·', '║', '·', '║', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
-    ['║', ' ', '·', '·', '·', ' ', '·', '║', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
-    ['║', '·', '·', '·', '·', '·', '·', '║', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
-    ['║', '·','·','·','·','·','·','·','·','·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
-    ['╚', '══', '══', '══', '══', '══', '══', '══','══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══','╝']
-];
+        ['╔', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '╗'],
+        ['║', '', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
+        ['║', '╔', '══', '╦', '·', '╗', '·', '╔', '══', '══', '══', '╗', '·', '·', '·', '·', '·', '·', '·', '║'],
+        ['║', ' ', '·', '║', '·', '║', '·', '║', 'f', 'f', '', '║', '', '·', '·', '·', '·', '·', '·', '║'],
+        ['║', '║', '·', '║', '·', '·', '·', '║', 'f', 'f', ' ', '', '·', '·', '·', '·', '·', '·', '·', '║'],
+        ['║', ' ', '·', '║', '·', '║', '·', '╚', '══', '══', '══', '╝', '·', '·', '·', '·', '·', '·', '·', '║'],
+        ['║', ' ', '·', '║', '·', '║', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
+        ['║', ' ', '·', '·', '·', ' ', '·', '║', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
+        ['║', '·', '·', '·', '·', '·', '·', '║', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
+        ['╚', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '╝']
+    ];
+    class Fantasmino {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    var alive = true;
+
+    const fantasmini = [];
 
     var pacmanX = 1;
     var pacmanY = 1;
@@ -95,17 +128,24 @@
     var dots = countDots();
 
     const gridContainer = document.getElementById("gridContainer");
+
     for (let i = 0; i < N; i++) {
         for (let j = 0; j < M; j++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
-            if(i==1 && j==1){
+            if (i == 1 && j == 1) {
                 cell.classList.add('pacman');
                 cell.textContent = '';
-            }else{
+            }
+            else {
                 cell.textContent = map[i][j];
-                if(map[i][j] === '·'){
+                if (map[i][j] === '·') {
                     cell.style.color = 'white';
+                } else if (map[i][j] === 'f') {
+                    cell.textContent = '';
+                    cell.classList.add('fantasmino');
+                    const f = new Fantasmino(i, j);
+                    fantasmini.push(f);
                 }
 
             }
@@ -114,102 +154,148 @@
     }
 
     //create a thread that switch the image of pacman every 500ms
-    setInterval(() => {
+    pacmanInterval = setInterval(() => {
         const pacman = document.querySelector('.pacman');
-        if(pacman.style.backgroundImage === 'url("./pac-aperto.png")'){
+
+        if (!alive) {
+            clearInterval(pacmanInterval); // Ferma l'intervallo quando pacman muore
+            return;
+        }
+
+
+        if (pacman.style.backgroundImage === 'url("./pac-aperto.png")') {
             pacman.style.backgroundImage = 'url("./pac-chiuso.png")';
-        }else{
+        } else {
             pacman.style.backgroundImage = 'url("./pac-aperto.png")';
         }
     }, 400);
 
     //now if the user press the arrow key the pacman should move
     document.addEventListener('keydown', (event) => {
+        if (!alive) {
+            return;
+        }
         const key = event.key;
-        if(key === 'ArrowRight'){
+        if (key === 'ArrowRight') {
             pacmanX++;
-        }else if(key === 'ArrowLeft'){
+        } else if (key === 'ArrowLeft') {
             pacmanX--;
-        }else if(key === 'ArrowUp'){
+        } else if (key === 'ArrowUp') {
             pacmanY--;
-        }else if(key === 'ArrowDown'){
+        } else if (key === 'ArrowDown') {
             pacmanY++;
         }
 
         //check if the pacman is on a wall
-        if(isWall(pacmanX, pacmanY)){
-            if(key === 'ArrowRight'){
+        if (isWall(pacmanX, pacmanY)) {
+            if (key === 'ArrowRight') {
                 pacmanX--;
-            }else if(key === 'ArrowLeft'){
+            } else if (key === 'ArrowLeft') {
                 pacmanX++;
-            }else if(key === 'ArrowUp'){
+            } else if (key === 'ArrowUp') {
                 pacmanY++;
-            }else if(key === 'ArrowDown'){
+            } else if (key === 'ArrowDown') {
                 pacmanY--;
             }
+            return;
+        }
+
+        if (iamDead(pacmanX, pacmanY)) {
+            if (key === 'ArrowRight') {
+                pacmanX--;
+            } else if (key === 'ArrowLeft') {
+                pacmanX++;
+            } else if (key === 'ArrowUp') {
+                pacmanY++;
+            } else if (key === 'ArrowDown') {
+                pacmanY--;
+            }
+            die();
             return;
         }
 
         //update the pacman position
         const pacman = document.querySelector('.pacman');
         pacman.classList.remove('pacman');
-        const newPacman = document.querySelector(`.grid-container div:nth-child(${pacmanY*20+pacmanX+1})`);
+        const newPacman = document.querySelector(`.grid-container div:nth-child(${pacmanY * 20 + pacmanX + 1})`);
         newPacman.classList.add('pacman');
 
         //remove the dot if the pacman is on it
         ifDotRemove(pacmanX, pacmanY);
 
         //rotate the pacman according to the direction
-        if(key === 'ArrowRight'){
+        if (key === 'ArrowRight') {
             rotatePacman('right');
-        }else if(key === 'ArrowLeft'){
+        } else if (key === 'ArrowLeft') {
             rotatePacman('left');
-        }else if(key === 'ArrowUp'){
+        } else if (key === 'ArrowUp') {
             rotatePacman('up');
-        }else if(key === 'ArrowDown'){
+        } else if (key === 'ArrowDown') {
             rotatePacman('down');
         }
     });
 
     //given two coordinates x and y, remove the '·' from the map if the dot is contained in that cell
-    function ifDotRemove(x, y){
-        const cell = document.querySelector(`.grid-container div:nth-child(${y*20+x+1})`);
-        if(cell.textContent === '·'){
+    function ifDotRemove(x, y) {
+        const cell = document.querySelector(`.grid-container div:nth-child(${y * 20 + x + 1})`);
+        if (cell.textContent === '·') {
             cell.textContent = '';
             dots--;
             document.getElementById('pallini').textContent = `Pallini: ${dots}`;
         }
     }
 
-    //boolean function that return true if the cell is a wall given a x,y coordinate
-    function isWall(y,x){
-        return map[x][y] === '═' || map[x][y] === '║' || map[x][y] === '╔' || map[x][y] === '╗' || map[x][y] === '╝' || map[x][y] === '╚' || map[x][y] === '╦' || map[x][y] === '╩'|| map[x][y] === '══';
+    function die() {
+        alive = false;
+        const pacman = document.querySelector('.pacman');
+        const pacmanIndex = Array.from(pacman.parentNode.children).indexOf(pacman); // Ottiene l'indice dell'elemento del Pacman all'interno del suo contenitore
+        const ripIcon = document.createElement('div');
+        ripIcon.classList.add('rip');
+        gridContainer.replaceChild(ripIcon, pacman.parentNode.children[pacmanIndex]); // Sostituisce l'elemento del Pacman con l'icona di "rip"
     }
-   
+
+
+    //boolean function that return true if the cell is a wall given a x,y coordinate
+    function isWall(y, x) {
+        return map[x][y] === '═' || map[x][y] === '║' || map[x][y] === '╔' || map[x][y] === '╗' || map[x][y] === '╝' || map[x][y] === '╚' || map[x][y] === '╦' || map[x][y] === '╩' || map[x][y] === '══';
+    }
+
+    function iamDead(y, x) {
+        for (let i = 0; i < fantasmini.length; i++) {
+            const fantasmino = fantasmini[i];
+            if (fantasmino.x === x && fantasmino.y === y) {
+                // Le coordinate corrispondono a un fantasmino
+                return true;
+            }
+        }
+        // Nessun fantasmino trovato con le coordinate specificate
+        return false;
+    }
+
 
 
     //method that rotate the pacman according to the direction
-    function rotatePacman(direction){
+    function rotatePacman(direction) {
         const pacman = document.querySelector('.pacman');
-        if(direction === 'right'){
+        if (direction === 'right') {
             pacman.style.transform = 'rotate(0deg)';
-        }else if(direction === 'left'){
+        } else if (direction === 'left') {
             pacman.style.transform = 'rotate(180deg)';
             //reflect the image on vertical axis
             pacman.style.transform = 'scaleX(-1)';
-        }else if(direction === 'up'){
+        } else if (direction === 'up') {
             pacman.style.transform = 'rotate(270deg)';
-        }else if(direction === 'down'){
+        } else if (direction === 'down') {
             pacman.style.transform = 'rotate(90deg)';
         }
     }
 
     //return the number of dots in the map
-    function countDots(){
+    function countDots() {
         let count = 0;
         for (let i = 0; i < N; i++) {
             for (let j = 0; j < M; j++) {
-                if(map[i][j] === '·'){
+                if (map[i][j] === '·') {
                     count++;
                 }
             }
@@ -218,12 +304,13 @@
     }
 
     //on load print the number of dots in div with id 'pallini'
-    window.onload = function(){
+    window.onload = function () {
         document.getElementById('pallini').textContent = `Pallini: ${dots}`;
     }
-    
-    
+
+
 
 
 </script>
+
 </html>
