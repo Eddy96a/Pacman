@@ -40,9 +40,8 @@
 
     .contatore {
         color: white;
-        width: 320px;
+        width: 120px;
         font-size: 14px;
-        margin-bottom: 10px;
         text-align: right;
     }
 
@@ -83,13 +82,43 @@
         background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
+    }
+
+    .menu {
+        width: 320px;
+        font-size: 14px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .reset {
+        border-radius: 5px;
+        padding: 6px 20px;
+        border: none;
+        
+    }
+
+    .reset:hover {
+        cursor: pointer;
+        background-color: rgb(152, 152, 156);
+        
+    }
+
+    .spazio {
+        padding: 5px;
 
     }
+
 </style>
 
 <body>
     <div class="container">
-        <div id="pallini" class="contatore">Pallini: 200</div>
+        <div class="menu">
+            <button class="reset" onclick="reset()"><i class="fa-solid fa-rotate-left spazio"></i>Reset</button>
+            <div id="pallini" class="contatore">Pallini: 200</div>
+        </div>
         <div class="centrato grid-container" id="gridContainer">
 
         </div>
@@ -151,6 +180,10 @@
             }
             gridContainer.appendChild(cell);
         }
+    }
+
+    function reset() {
+        alert("ciao sto resetando")
     }
 
     //create a thread that switch the image of pacman every 500ms
