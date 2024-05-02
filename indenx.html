@@ -89,7 +89,7 @@
         font-size: 14px;
         margin-bottom: 10px;
         display: flex;
-        justify-content: space-between;
+        justify-content: right;
         align-items: center;
     }
 
@@ -97,20 +97,20 @@
         border-radius: 5px;
         padding: 6px 20px;
         border: none;
-        
+        display: none;
+
     }
 
     .reset:hover {
         cursor: pointer;
         background-color: rgb(152, 152, 156);
-        
+
     }
 
     .spazio {
         padding: 5px;
 
     }
-
 </style>
 
 <body>
@@ -147,43 +147,65 @@
 
     var alive = true;
 
-    const fantasmini = [];
+    var fantasmini = [];
 
     var pacmanX = 1;
     var pacmanY = 1;
     const N = 10; //righe
     const M = 20  //colonne
-
     var dots = countDots();
 
-    const gridContainer = document.getElementById("gridContainer");
 
-    for (let i = 0; i < N; i++) {
-        for (let j = 0; j < M; j++) {
-            const cell = document.createElement('div');
-            cell.classList.add('cell');
-            if (i == 1 && j == 1) {
-                cell.classList.add('pacman');
-                cell.textContent = '';
-            }
-            else {
-                cell.textContent = map[i][j];
-                if (map[i][j] === '·') {
-                    cell.style.color = 'white';
-                } else if (map[i][j] === 'f') {
+    function init() {
+        const gridContainer = document.getElementById("gridContainer");
+
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < M; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                if (i == 1 && j == 1) {
+                    cell.classList.add('pacman');
                     cell.textContent = '';
-                    cell.classList.add('fantasmino');
-                    const f = new Fantasmino(i, j);
-                    fantasmini.push(f);
                 }
+                else {
+                    cell.textContent = map[i][j];
+                    if (map[i][j] === '·') {
+                        cell.style.color = 'white';
+                    } else if (map[i][j] === 'f') {
+                        cell.textContent = '';
+                        cell.classList.add('fantasmino');
+                        const f = new Fantasmino(i, j);
+                        fantasmini.push(f);
+                    }
 
+                }
+                gridContainer.appendChild(cell);
             }
-            gridContainer.appendChild(cell);
         }
     }
 
+    init();
+
+
+
+
     function reset() {
-        alert("ciao sto resetando")
+        alert("ciao sto resetando");
+        //empty the gridcontainer
+        const gridContainer = document.getElementById("gridContainer");
+        gridContainer.innerHTML = '';
+
+        fantasmini = [];
+        pacmanX = 1;
+        pacmanY = 1;
+        dots = countDots();
+        init();
+        document.getElementById('pallini').textContent = `Pallini: ${dots}`;
+        var resetButton = document.querySelector('.reset');
+        resetButton.style.display = 'none';
+        var menu = document.querySelector('.menu');
+        menu.style.justifyContent = 'right';
+        alive = true;
     }
 
     //create a thread that switch the image of pacman every 500ms
@@ -285,6 +307,10 @@
         const ripIcon = document.createElement('div');
         ripIcon.classList.add('rip');
         gridContainer.replaceChild(ripIcon, pacman.parentNode.children[pacmanIndex]); // Sostituisce l'elemento del Pacman con l'icona di "rip"
+        var resetButton = document.querySelector('.reset');
+        resetButton.style.display = 'block';
+        var menu = document.querySelector('.menu');
+        menu.style.justifyContent = 'space-between';
     }
 
 
