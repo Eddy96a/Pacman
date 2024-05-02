@@ -154,6 +154,86 @@
     const N = 10; //righe
     const M = 20  //colonne
     var dots = countDots();
+    //create enum for direction
+    const Direction = {
+        UP: 'up',
+        DOWN: 'down',
+        LEFT: 'left',
+        RIGHT: 'right'
+    }
+
+    //create a function that return a random direction
+    function randomDirection() {
+        const directions = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT];
+        const randomIndex = Math.floor(Math.random() * directions.length);
+        return directions[randomIndex];
+    }
+
+    //create a function that move a fantasmino in a random direction, given the fantasmino index
+    function moveFantasmino(index) {
+        const fantasmino = fantasmini[index];
+        const direction = randomDirection();
+        let newX = fantasmino.x;
+        let newY = fantasmino.y;
+        if (direction === Direction.UP) {
+            newY--;
+        } else if (direction === Direction.DOWN) {
+            newY++;
+        } else if (direction === Direction.LEFT) {
+            newX--;
+        } else if (direction === Direction.RIGHT) {
+            newX++;
+        }
+
+        //check if the new position is a wall
+        if (isWall(newY, newX)) {
+            return;
+        }
+
+        if(isGhost(newY, newX)){
+            return;
+        }
+
+        //check if the new position is the pacman
+        if (newX === pacmanX && newY === pacmanY) {
+            die();
+            return;
+        }
+
+        //update the fantasmino position
+
+        var oldX = fantasmino.x;
+        var oldY = fantasmino.y;
+
+        fantasmino.x = newX;
+        fantasmino.y = newY;
+
+        //update the fantasmino position
+        const oldCell = document.querySelector(`.grid-container div:nth-child(${oldX * 20 + oldY + 1})`);
+        oldCell.classList.remove('fantasmino');
+
+        const newCell = document.querySelector(`.grid-container div:nth-child(${newX * 20 + newY + 1})`);
+        newCell.classList.add('fantasmino');
+
+
+
+    }
+
+    function isGhost(y, x) {
+        for (let i = 0; i < fantasmini.length; i++) {
+            const fantasmino = fantasmini[i];
+            if (fantasmino.x === x && fantasmino.y === y) {
+                // Le coordinate corrispondono a un fantasmino
+                return true;
+            }
+        }
+        // Nessun fantasmino trovato con le coordinate specificate
+        return false;
+    }
+
+
+    //create a thread that move the fantasmini every 500ms
+
 
 
     function init() {
@@ -174,6 +254,9 @@
                     } else if (map[i][j] === 'f') {
                         cell.textContent = '';
                         cell.classList.add('fantasmino');
+                        //add a progressive ID to the fantasmino like f0, f1, f2, ...
+                        cell.id = 'f' + (fantasmini.length);
+                        //alert with the coordinates of i and j of fantasmino
                         const f = new Fantasmino(i, j);
                         fantasmini.push(f);
                     }
@@ -182,6 +265,14 @@
                 gridContainer.appendChild(cell);
             }
         }
+        setInterval(() => {
+            if (!alive) {
+                return;
+            }
+            for (let i = 0; i < fantasmini.length; i++) {
+                moveFantasmino(i);
+            }
+        }, 500);
     }
 
     init();
@@ -216,7 +307,6 @@
             clearInterval(pacmanInterval); // Ferma l'intervallo quando pacman muore
             return;
         }
-
 
         if (pacman.style.backgroundImage === 'url("./pac-aperto.png")') {
             pacman.style.backgroundImage = 'url("./pac-chiuso.png")';
