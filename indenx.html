@@ -130,6 +130,7 @@
     //p2=pacman a giù
     //p3=pacman a sinistra
     //p4=pacman in su
+
     const map = [
         ['╔', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '╗'],
         ['║', 'p1', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
@@ -142,7 +143,8 @@
         ['║', '·', '·', '·', '·', '·', '·', '║', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '·', '║'],
         ['╚', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '══', '╝']
     ];
-    var playMap=[];
+    var playMap=[]; //mappa di gioco che cambierà dinamicamente
+
     class Fantasmino {
         constructor(x, y) {
             this.x = x;
@@ -156,9 +158,14 @@
 
     var pacmanX = 1;
     var pacmanY = 1;
+
     const N = 10; //righe
     const M = 20  //colonne
+
     var dots = countDots();
+
+    init();
+
     //create enum for direction
     const Direction = {
         UP: 'up',
@@ -240,25 +247,59 @@
     //create a thread that move the fantasmini every 500ms
 
     function init(){
+
+        alert("STO FACENDO INIT");
+
         for (let i = 0; i < N; i++) {
             var rigacopia=[];
             for (let j = 0; j < M; j++) {
                 rigacopia.push(map[i][j]);
-            }
-            playMap.push(rigacopia);
-        }
-        for (let i = 0; i < N; i++) {
-            for (let j = 0; j < M; j++) {
-                if (playMap[i][j]==="f1" || playMap[i][j]==="f2" || playMap[i][j]==="f3" || playMap[i][j]==="f4") {
+
+                if (map[i][j]==="f1" || map[i][j]==="f2" || map[i][j]==="f3" || map[i][j]==="f4") {
                     var fantasmino = new Fantasmino(j,i);
                     fantasmini.push(fantasmino);
                 }
             }
-        }          
+            playMap.push(rigacopia);
+        }
+        initUI();
     }
 
+    function isFantasmino(x, y){
+        return playMap[x][y] === "f1" || playMap[x][y] === "f2" || playMap[x][y] === "f3" || playMap[x][y] === "f4";
+    }
+
+    function initUI(){
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < M; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                if (i == 1 && j == 1) {
+                    cell.classList.add('pacman');
+                    cell.textContent = '';
+                }
+                else {
+                    cell.textContent = playMap[i][j];
+                    if (playMap[i][j] === '·') {
+                        cell.style.color = 'white';
+                    } else if (isFantasmino(i,j)) {
+                        cell.textContent = '';
+                        cell.classList.add('fantasmino');
+                        //add a progressive ID to the fantasmino like f0, f1, f2, ...
+                        cell.id = playMap[i][j];
+                        //alert with the coordinates of i and j of fantasmino
+                    }
+
+                }
+                gridContainer.appendChild(cell);
+            }
+        }
+
+    }
+
+
     function oldinit() {
-        const gridContainer = document.getElementById("gridContainer");
+        /* const gridContainer = document.getElementById("gridContainer");
 
         for (let i = 0; i < N; i++) {
             for (let j = 0; j < M; j++) {
@@ -293,16 +334,16 @@
             for (let i = 0; i < fantasmini.length; i++) {
                 moveFantasmino(i);
             }
-        }, 500);
+        }, 500); */
     }
 
-    init();
+    
 
 
 
 
     function reset() {
-        alert("ciao sto resetando");
+       /*  alert("ciao sto resetando");
         //empty the gridcontainer
         const gridContainer = document.getElementById("gridContainer");
         gridContainer.innerHTML = '';
@@ -317,12 +358,13 @@
         resetButton.style.display = 'none';
         var menu = document.querySelector('.menu');
         menu.style.justifyContent = 'right';
-        alive = true;
+        alive = true; */
     }
 
     //create a thread that switch the image of pacman every 500ms
+
     pacmanInterval = setInterval(() => {
-        const pacman = document.querySelector('.pacman');
+       /*  const pacman = document.querySelector('.pacman');
 
         if (!alive) {
             clearInterval(pacmanInterval); // Ferma l'intervallo quando pacman muore
@@ -333,11 +375,29 @@
             pacman.style.backgroundImage = 'url("./pac-chiuso.png")';
         } else {
             pacman.style.backgroundImage = 'url("./pac-aperto.png")';
+        } */
+    }, 
+    400);
+
+
+    function getRotatedPacmanString(direction){
+        if (direction === 'ArrowRight') {
+            return "p1";
+        } else if (direction === 'ArrowLeft') {
+            return "p3";
+        } else if (direction === 'ArrowUp') {
+            return "p4";
+        } else if (direction === 'ArrowDown') {
+            return "p2";
         }
-    }, 400);
+    }
 
     //now if the user press the arrow key the pacman should move
     document.addEventListener('keydown', (event) => {
+
+        const oldPacmanX = pacmanX;
+        const oldPacmanY = pacmanY;
+
         if (!alive) {
             return;
         }
@@ -380,17 +440,27 @@
             return;
         }
 
+        if(playMap[pacmanY][pacmanX] === '·'){
+            dots --;
+        }
+
         //update the pacman position
-        const pacman = document.querySelector('.pacman');
+        playMap[pacmanY][pacmanX] = getRotatedPacmanString(key);
+        playMap[oldPacmanY][oldPacmanX] = "";
+
+        updateUI();
+
+
+     /*    const pacman = document.querySelector('.pacman');
         pacman.classList.remove('pacman');
         const newPacman = document.querySelector(`.grid-container div:nth-child(${pacmanY * 20 + pacmanX + 1})`);
-        newPacman.classList.add('pacman');
+        newPacman.classList.add('pacman'); */
 
         //remove the dot if the pacman is on it
-        ifDotRemove(pacmanX, pacmanY);
+       // ifDotRemove(pacmanX, pacmanY);
 
         //rotate the pacman according to the direction
-        if (key === 'ArrowRight') {
+     /*    if (key === 'ArrowRight') {
             rotatePacman('right');
         } else if (key === 'ArrowLeft') {
             rotatePacman('left');
@@ -398,8 +468,56 @@
             rotatePacman('up');
         } else if (key === 'ArrowDown') {
             rotatePacman('down');
-        }
+        } */
     });
+
+    function isPacman(text){
+        return text === "p1" || text === "p2" || text === "p3" || text === "p4";
+    }
+
+    function getDirectionFromP(text){
+        switch(text){
+            case "p1": return "right";
+            case "p2": return "down";
+            case "p3": return "left";
+            case "p4": return "up";
+        }
+    }
+
+
+    function updateUI(){
+        const gridContainer = document.getElementById("gridContainer");
+        gridContainer.innerHTML = '';
+
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < M; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                if (isPacman(cell.textContent)) {
+                    console.log("HO TROVATO UN BEL PACCOMANO: "+i+", "+j);
+                    cell.classList.add('pacman');
+                    cell.textContent = '';
+                    rotatePacman(getDirectionFromP(cell.textContent));
+                }
+                else {
+                    cell.textContent = playMap[i][j];
+                    if (playMap[i][j] === '·') {
+                        cell.style.color = 'white';
+                    } else if (isFantasmino(i,j)) {
+                        cell.textContent = '';
+                        cell.classList.add('fantasmino');
+                        //add a progressive ID to the fantasmino like f0, f1, f2, ...
+                        cell.id = playMap[i][j];
+                        //alert with the coordinates of i and j of fantasmino
+                    }
+
+                }
+                gridContainer.appendChild(cell);
+            }
+        }
+
+
+    }
 
     //given two coordinates x and y, remove the '·' from the map if the dot is contained in that cell
     function ifDotRemove(x, y) {
@@ -412,7 +530,7 @@
     }
 
     function die() {
-        alive = false;
+      /*   alive = false;
         const pacman = document.querySelector('.pacman');
         const pacmanIndex = Array.from(pacman.parentNode.children).indexOf(pacman); // Ottiene l'indice dell'elemento del Pacman all'interno del suo contenitore
         const ripIcon = document.createElement('div');
@@ -421,13 +539,13 @@
         var resetButton = document.querySelector('.reset');
         resetButton.style.display = 'block';
         var menu = document.querySelector('.menu');
-        menu.style.justifyContent = 'space-between';
+        menu.style.justifyContent = 'space-between'; */
     }
 
 
     //boolean function that return true if the cell is a wall given a x,y coordinate
     function isWall(y, x) {
-        return map[x][y] === '═' || map[x][y] === '║' || map[x][y] === '╔' || map[x][y] === '╗' || map[x][y] === '╝' || map[x][y] === '╚' || map[x][y] === '╦' || map[x][y] === '╩' || map[x][y] === '══';
+        return playMap[x][y] === '═' || playMap[x][y] === '║' || playMap[x][y] === '╔' || playMap[x][y] === '╗' || playMap[x][y] === '╝' || playMap[x][y] === '╚' || playMap[x][y] === '╦' || playMap[x][y] === '╩' || playMap[x][y] === '══';
     }
 
     function iamDead(y, x) {
